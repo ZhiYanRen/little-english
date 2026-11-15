@@ -1,4 +1,5 @@
 import { units, typeNames } from "./catalog.js";
+import { officialResources } from "./official-resources.js";
 import {
   STORAGE_KEY,
   MAX_IMPORT_BYTES,
@@ -122,7 +123,7 @@ function getRoute() {
   if (
     p[0] === "unit" &&
     /^([1-9]|1[0-2])$/.test(p[1]) &&
-    ["words", "sentences", "audio"].includes(p[2])
+    ["resources", "words", "sentences", "audio"].includes(p[2])
   )
     return { view: "unit", unit: Number(p[1]), tab: p[2] };
   if (["review", "materials", "progress"].includes(p[0]))
@@ -164,6 +165,9 @@ function notice(text, kind = "info") {
 function empty(title, description, action = true) {
   return `<div class="empty">${icon("folder")}<h2>${title}</h2><p>${description}</p>${action ? '<a class="button primary" href="#/materials">导入学习资料 ' + icon("arrow") + "</a>" : ""}</div>`;
 }
+function firstUnitTab(n) {
+  return unitEntries(n).some((e) => e.type !== "audio") ? "words" : "resources";
+}
 function bookView() {
   const total = countText(state.entries),
     mastered = state.entries.filter(
@@ -176,18 +180,18 @@ function bookView() {
       "从熟悉的课本，开始今天的学习。",
       `<a class="button secondary" href="#/progress">${icon("chart")}学习进度</a>`,
     ) +
-    `<section class="book-banner"><div class="book-cover" aria-hidden="true"><span class="book-edition">SECOND EDITION</span><div class="book-name">Kid’s<br>Box<span>2</span></div><div class="book-stars">✦</div><div class="cover-line"></div><span class="cover-bottom">ENGLISH ADVENTURES</span></div><div class="book-info"><span class="pill">剑桥国际少儿英语</span><h2>第二版 <span>·</span> 第 2 级</h2><p>熟悉的 12 个单元，自己的学习节奏。</p><div class="book-numbers"><div><strong>12</strong><span>教材单元</span></div><div><strong>${total}</strong><span>已导入词句</span></div><div><strong>${mastered}</strong><span>已掌握词句</span></div></div><a class="text-link" href="#/unit/${state.recentUnit}/words">进入 Unit ${state.recentUnit} ${icon("arrow")}</a></div><div class="book-sticker" aria-hidden="true">${icon("spark")}<span>Little steps,<br>big discoveries.</span></div></section><div class="section-heading"><h2>选择学习单元</h2><a href="https://kb.unischool.cn/" target="_blank" rel="noopener noreferrer">官方配套资源 ↗</a></div><div class="unit-grid">${units
+    `<section class="book-banner"><div class="book-cover" aria-hidden="true"><span class="book-edition">SECOND EDITION</span><div class="book-name">Kid’s<br>Box<span>2</span></div><div class="book-stars">✦</div><div class="cover-line"></div><span class="cover-bottom">ENGLISH ADVENTURES</span></div><div class="book-info"><span class="pill">剑桥国际少儿英语</span><h2>第二版 <span>·</span> 第 2 级</h2><p>熟悉的 12 个单元，自己的学习节奏。</p><div class="book-numbers"><div><strong>12</strong><span>教材单元</span></div><div><strong>${total}</strong><span>已导入词句</span></div><div><strong>${mastered}</strong><span>已掌握词句</span></div></div><a class="text-link" href="#/unit/${state.recentUnit}/${firstUnitTab(state.recentUnit)}">进入 Unit ${state.recentUnit} ${icon("arrow")}</a></div><div class="book-sticker" aria-hidden="true">${icon("spark")}<span>Little steps,<br>big discoveries.</span></div></section><div class="section-heading"><h2>选择学习单元</h2><a href="https://kb.unischool.cn/" target="_blank" rel="noopener noreferrer">官方配套资源 ↗</a></div><div class="unit-grid">${units
       .map((u) => {
         const entries = unitEntries(u.id),
           total = countText(entries),
           done = entries.filter(
             (e) => e.type !== "audio" && progressFor(e.id).mastered,
           ).length;
-        return `<a class="unit-card ${u.color}" href="#/unit/${u.id}/words"><div class="unit-top"><span class="unit-number">${String(u.id).padStart(2, "0")}</span>${icon(u.icon, "unit-illustration")}<span class="unit-arrow">↗</span></div><h3 lang="en">${esc(u.title)}</h3><p>${u.zh}<span> · ${u.theme}</span></p><div class="unit-meta"><span>${total ? `${total} 个词句 · 已掌握 ${done}` : "词句待导入"}</span><span>UNIT ${String(u.id).padStart(2, "0")}</span></div></a>`;
+        return `<a class="unit-card ${u.color}" href="#/unit/${u.id}/${firstUnitTab(u.id)}"><div class="unit-top"><span class="unit-number">${String(u.id).padStart(2, "0")}</span>${icon(u.icon, "unit-illustration")}<span class="unit-arrow">↗</span></div><h3 lang="en">${esc(u.title)}</h3><p>${u.zh}<span> · ${u.theme}</span></p><div class="unit-meta"><span>${total ? `${total} 个词句 · 已掌握 ${done}` : `${officialResources.units[u.id - 1].videos.length} 项官方视频 · ${officialResources.units[u.id - 1].audio.length} 条音轨`}</span><span>UNIT ${String(u.id).padStart(2, "0")}</span></div></a>`;
       })
       .join(
         "",
-      )}</div><div class="catalog-note">${icon("check")}单元目录已按外研社第二版第 2 级核对。教材词句与录音由你在本机导入。<a href="#/materials">了解如何导入 →</a></div>`
+      )}</div><div class="catalog-note">${icon("check")}已核对12单元、56项视频与172条音轨的官方目录。播放按出版社要求登录激活。<a href="#/materials">了解如何导入 →</a></div>`
   );
 }
 function unitShell(u) {
@@ -199,6 +203,7 @@ function unitShell(u) {
       sourceLink(u),
     ) +
     `<div class="unit-nav"><a href="#/book" class="back-link">← 全部单元</a><div class="tabs" aria-label="本单元学习模块">${[
+      ["resources", "book", "官方资源"],
       ["words", "words", "单词短语"],
       ["sentences", "chat", "句子跟读"],
       ["audio", "audio", "听力练习"],
@@ -321,6 +326,24 @@ function audioView() {
     `<div class="empty-links">${sourceLink(u, "打开官方音频资源")}${btn("add", "添加音轨或分段")}</div>`
   );
 }
+function officialFreeResources() {
+  return `<section class="official-free"><div class="section-heading"><h2>没有本机文件？先用官方公开资料</h2><a href="${officialResources.publicSource}" target="_blank" rel="noopener noreferrer">来源：外研社免费资源 ↗</a></div><p class="muted small">以下链接由出版社公开提供。第1单元样张、样例音频与《同步练习与测试》配套资料各有不同范围，不等于学生用书12单元的完整课文或视频。</p><div class="official-free-grid">${officialResources.freeResources.map((r) => `<a class="official-free-link" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer"><span class="pill">${r.format}</span><strong>${esc(r.title)} ↗</strong><span>${esc(r.note)}</span></a>`).join("")}</div></section>`;
+}
+function officialView() {
+  const u = units[route.unit - 1],
+    resource = officialResources.units[route.unit - 1];
+  const link = (section, label) =>
+    `<a class="button primary" href="${u.source}#${section}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
+  return (
+    unitShell(u) +
+    notice(
+      "以下为外研社官方目录。课程播放需要在官网登录并激活资源；本应用不保存整册视频或课文。没有激活资料时，可先使用下方官方公开下载。",
+    ) +
+    `<div class="official-resource-grid"><section class="surface"><div class="section-heading"><h2>本单元视频 <span class="muted">${resource.videos.length} 项</span></h2><span class="pill">官网播放 · 需激活</span></div><div class="official-video-list">${resource.videos.map((title, i) => `<div class="official-video-row"><span class="unit-number">${String(i + 1).padStart(2, "0")}</span><div><strong lang="en">${esc(title.replace(/^KB2 Unit \d+ /, ""))}</strong><span>Unit ${u.id} · 官方视频条目</span></div>${icon("play")}</div>`).join("")}</div>${link("studentBookVideo", "在官网打开本单元视频")}</section><section class="surface"><div class="section-heading"><h2>本单元音频 <span class="muted">${resource.audio.length} 条</span></h2><span class="pill">官网播放 · 需激活</span></div><p class="small muted">官网合并列出学生用书与活动用书音轨。以下是音轨编号，尚未导入本机，也未逐轨验证播放。</p><div class="official-audio-list">${resource.audio.map((title) => `<span>${esc(title.replace(/^\d+ .*? (CD\d+ T\d+)$/, "$1"))}</span>`).join("")}</div>${link("studentBookAudio", "在官网打开本单元音频")}</section></div><section class="surface official-text-note"><h2>课文短句</h2><p>目前没有收录学生用书整册原句。下方提供的官方样张和配套听力文本可用于查看原文；同步练习文本不等同于学生用书完整课文。</p><a class="text-link" href="#/unit/${u.id}/sentences">查看本机句子跟读 ${icon("arrow")}</a></section>` +
+    officialFreeResources() +
+    `<p class="resource-checked">目录核对：${officialResources.checkedAt} · ${esc(officialResources.edition)}。目录条目不计入已导入词句或学习成绩。</p>`
+  );
+}
 function materialsView() {
   return (
     heading(
@@ -328,6 +351,7 @@ function materialsView() {
       "把自己的教材，放进来",
       "文字、音频和学习记录只保存在当前浏览器。",
     ) +
+    officialFreeResources() +
     `<div class="material-grid"><section class="surface"><div class="section-icon">${icon("words")}</div><h2>教材文字</h2><p>添加课本中的单词、短语和句子；或从表格批量导入。</p><div class="material-count">${countText(state.entries)}<span> 个词句</span></div><div class="actions">${btn("add", "手动添加", "primary")}${btn("import-text", "导入 JSON / TSV")}${btn("paste", "粘贴表格文字", "ghost")}</div></section><section class="surface"><div class="section-icon purple-text">${icon("audio")}</div><h2>配套音频</h2><p>保存本机录音，按文件名关联词句，支持循环、调速与分段。</p><div class="material-count">${audioNames.length}<span> 个本机录音</span></div><label class="inline-field">导入到 <select id="audio-unit">${units.map((u) => `<option value="${u.id}" ${u.id === state.recentUnit ? "selected" : ""}>Unit ${u.id} · ${u.zh}</option>`).join("")}</select></label><div class="actions">${btn("import-audio", "选择音频文件", "primary")}</div></section></div><section class="surface backup-surface"><div><h2>给学习留一份备份</h2><p>导出教材文字与学习进度。换设备时导入 JSON 备份，再重新选择原始音频文件。</p><p class="muted small">备份不含音频。清理浏览器数据会移除本机资料，请保留备份与原始录音。</p></div>${btn("export", icon("folder") + "导出文字与进度", "secondary")}</section><section class="surface import-help"><h2>怎样准备导入文件？</h2><p>用表格软件整理后，另存为 UTF-8 TSV（制表符分隔），或复制到“粘贴表格文字”。表头须包含以下字段：</p><div class="table-scroll"><table><thead><tr><th>unit</th><th>type</th><th>en</th><th>zh</th><th>audio（可选）</th><th>start / end（可选）</th></tr></thead><tbody><tr><td>1—12</td><td>word / phrase / sentence / audio</td><td>英文原文或音轨名</td><td>中文释义</td><td>本机音频文件名</td><td>开始 / 结束秒数</td></tr></tbody></table></div><p>每行一条；audio 类型用于整段录音，需填写文件名。词句的英文、单元和类型相同时视为重复，导入时保留已有中文与音频设置。需要修改时，在学习卡片中选择“编辑词句”。</p><div class="actions">${btn("template", "下载空白 TSV 模板", "secondary")}<a class="text-link" href="https://kb.unischool.cn/" target="_blank" rel="noopener noreferrer">前往出版社配套资源 ↗</a></div></section>`
   );
 }
@@ -366,9 +390,11 @@ function render(focus = false) {
         ? materialsView()
         : route.view === "progress"
           ? progressView()
-          : route.view === "unit" && route.tab === "audio"
-            ? audioView()
-            : studyView();
+          : route.view === "unit" && route.tab === "resources"
+            ? officialView()
+            : route.view === "unit" && route.tab === "audio"
+              ? audioView()
+              : studyView();
   showStorage();
   if (focus) $("h1")?.focus({ preventScroll: true });
 }

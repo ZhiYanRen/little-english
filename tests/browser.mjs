@@ -1,5 +1,6 @@
 import { chromium } from "@playwright/test";
 import assert from "node:assert/strict";
+import { officialResources } from "../public/official-resources.js";
 import { mkdir, writeFile } from "node:fs/promises";
 const base = process.env.TEST_URL || "http://127.0.0.1:4182/little-english/";
 const browser = await chromium.launch({
@@ -75,6 +76,75 @@ try {
     .locator(".unit-card")
     .evaluateAll((all) => all.map((a) => a.getAttribute("href")));
   assert.equal(new Set(links).size, 12);
+  await page.locator(".unit-card").first().click();
+  await page
+    .locator('.tabs a[aria-current="page"][href="#/unit/1/resources"]')
+    .waitFor();
+  assert.equal(await page.locator(".official-video-row").count(), 5);
+  assert.equal(
+    await page.locator(".official-video-row strong").first().innerText(),
+    "Karaoke",
+  );
+  assert.equal(
+    await page.locator(".official-audio-list span").first().innerText(),
+    "CD1 T2",
+  );
+  await page.getByText("登录并激活", { exact: false }).first().waitFor();
+  const resourceVideo = page.getByRole("link", {
+    name: "在官网打开本单元视频",
+  });
+  assert.equal(
+    await resourceVideo.getAttribute("href"),
+    "https://www.unischool.cn/kb/resource/kb2/book2/unit1/#studentBookVideo",
+  );
+  assert.equal(await resourceVideo.getAttribute("target"), "_blank");
+  assert.match(await resourceVideo.getAttribute("rel"), /noopener noreferrer/);
+  assert.equal(await page.locator(".official-free-link").count(), 4);
+  assert.equal(await page.locator("video,iframe").count(), 0);
+  assert.equal(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("little-english-kb2-v1")).entries
+          .length,
+    ),
+    0,
+    "official metadata is not imported as textbook text",
+  );
+  await context.route(
+    "https://www.unischool.cn/kb/resource/kb2/book2/unit1/",
+    (r) =>
+      r.fulfill({
+        contentType: "text/html",
+        body: "<title>官方资源目标页测试</title>",
+      }),
+  );
+  const officialPopupEvent = page.waitForEvent("popup");
+  await resourceVideo.click();
+  const officialPopup = await officialPopupEvent;
+  await officialPopup.waitForLoadState();
+  assert.equal(
+    officialPopup.url(),
+    "https://www.unischool.cn/kb/resource/kb2/book2/unit1/#studentBookVideo",
+  );
+  assert.equal(await officialPopup.evaluate(() => window.opener), null);
+  await officialPopup.close();
+  for (const item of officialResources.units) {
+    await jump(`#/unit/${item.unit}/resources`);
+    assert.equal(
+      await page.locator(".official-video-row").count(),
+      item.videos.length,
+    );
+    assert.equal(
+      await page.locator(".official-audio-list span").count(),
+      item.audio.length,
+    );
+    if (item.unit === 3)
+      await page
+        .getByText("What's the time, Mr Wolf?", { exact: true })
+        .waitFor();
+    if (item.unit === 10)
+      await page.getByText("Let's go climbing!", { exact: true }).waitFor();
+  }
   await jump("#/unit/2/words");
   await page.getByRole("heading", { name: "本模块还没有教材词句" }).waitFor();
   const official = page
@@ -316,6 +386,23 @@ try {
     ["desktop", 1440, 1000],
   ]) {
     await page.setViewportSize({ width, height });
+    await jump("#/unit/2/resources");
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      true,
+      `${name} resources overflow`,
+    );
+    assert.equal(await page.locator(".tabs a").count(), 4);
+    for (const tab of await page.locator(".tabs a").all()) {
+      const box = await tab.boundingBox();
+      assert.ok(box.height >= 44 && box.width >= 44);
+    }
+    await page.screenshot({
+      path: `work/screenshots/resources-${name}.png`,
+      fullPage: true,
+    });
     await jump("#/book");
     assert.equal(
       await page.evaluate(

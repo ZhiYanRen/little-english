@@ -117,3 +117,5 @@
 - 本机教材/进度在 localStorage，音频 Blob 在 IndexedDB；导入在写入前完整校验，先预览再合并，不删除现有记录。文本渲染必须转义，音频只从用户本机文件播放。
 - 直接在 main 开发、验证、自动提交推送，禁止分支与 worktree；每次跟进 CI/Pages，核对线上子路径和图标资源后报告实际发布状态。
 - 应用岛 app-island/public/projects.json：创建先 pending/url=null，实际部署核验后用登记脚本更新 published 与正式地址；维护复制 Logo，入口 target=_blank/rel=noopener noreferrer。保护其他项目未完成变更，只提交本任务目录增量。
+
+- 官方资源索引 public/official-resources.js 仅存12单元56项视频、172项音轨的公开目录元数据及4个公开下载链接。维护脚本只读取公开目录，严禁使用隐藏播放文章/媒体地址绕过登录激活，不得把第1单元样张或同步练习资料标成整册学生用书。资源页不写入私有entries/progress，目录条目不能计入已学习/已导入数量。

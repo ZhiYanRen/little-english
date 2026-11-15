@@ -139,3 +139,45 @@ test("large valid material backups remain reimportable after adding IDs, default
   assert.ok(Buffer.byteLength(backup) <= m.MAX_IMPORT_BYTES);
   assert.equal(m.parseImport(backup).entries.length, 651);
 });
+
+test("official resource index covers all units without copying protected media or lesson text", async () => {
+  const { officialResources } = await import("../public/official-resources.js");
+  assert.equal(officialResources.units.length, 12);
+  assert.ok(
+    officialResources.units[2].videos.includes(
+      "KB2 Unit 3 What's the time, Mr Wolf?",
+    ),
+  );
+  assert.ok(
+    officialResources.units[9].videos.includes(
+      "KB2 Unit 10 Let's go climbing!",
+    ),
+  );
+  assert.equal(
+    officialResources.units.reduce((n, u) => n + u.videos.length, 0),
+    56,
+  );
+  assert.equal(
+    officialResources.units.reduce((n, u) => n + u.audio.length, 0),
+    172,
+  );
+  for (const [i, u] of officialResources.units.entries()) {
+    assert.equal(u.unit, i + 1);
+    assert.equal(u.requiresActivation, true);
+    assert.equal(
+      u.source,
+      `https://www.unischool.cn/kb/resource/kb2/book2/unit${i + 1}/`,
+    );
+    assert.ok(
+      u.videos.every((title) => title.startsWith(`KB2 Unit ${i + 1} `)),
+    );
+    assert.ok(
+      !JSON.stringify(u).match(/\.mp4|\.mp3|\/c\/|tapescript|transcript/i),
+    );
+  }
+  assert.equal(officialResources.freeResources.length, 4);
+  for (const resource of officialResources.freeResources) {
+    assert.equal(new URL(resource.url).hostname, "cdn-web.unischool.cn");
+    assert.ok(resource.note);
+  }
+});
