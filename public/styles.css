@@ -1024,7 +1024,7 @@ main {
   flex: 1;
   padding: 9px;
   font-size: 13px;
-  min-height: 40px;
+  min-height: 44px;
 }
 .study-word {
   text-align: center;
@@ -1642,7 +1642,7 @@ dialog::backdrop {
   .top-materials {
     font-size: 12px;
     padding: 7px 12px;
-    min-height: 40px;
+    min-height: 44px;
   }
   main {
     padding: 25px 20px 30px;
