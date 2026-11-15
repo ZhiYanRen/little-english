@@ -141,6 +141,7 @@ try {
   await page.locator(".skip").focus();
   await page.keyboard.press("Enter");
   assert.equal(await page.evaluate(() => location.hash), "#/unit/2/words");
+  await page.waitForFunction(() => document.activeElement.id === "main");
   assert.equal(await page.evaluate(() => document.activeElement.id), "main");
   await page.locator("#entry-search").fill("zzzz");
   await page.getByText("没有找到匹配词句").waitFor();
@@ -359,6 +360,24 @@ try {
   );
   await page.setViewportSize({ width: 834, height: 1194 });
   await page.screenshot({ path: "work/screenshots/study.png", fullPage: true });
+  await click("edit");
+  await page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        document
+          .querySelector("dialog")
+          .addEventListener("close", () => setTimeout(resolve, 0), {
+            once: true,
+          });
+        document.querySelector("#editor-form").requestSubmit();
+        document.querySelector(".skip").focus();
+      }),
+  );
+  assert.equal(
+    await page.evaluate(() => document.activeElement.className),
+    "skip",
+    "delayed dialog close preserves newer focus",
+  );
   const blocked = await browser.newContext();
   await blocked.addInitScript(() => {
     Object.defineProperty(window, "localStorage", {

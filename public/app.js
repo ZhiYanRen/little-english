@@ -429,6 +429,10 @@ $("#dialog").addEventListener("close", () => {
   if ($("#dialog").open) return;
   pendingImport = null;
   pendingAudio = null;
+  // A delayed close event must not steal focus from a newer user action.
+  const current = document.activeElement;
+  if (current && current !== document.body && !$("#dialog").contains(current))
+    return;
   if (dialogTrigger?.isConnected) dialogTrigger.focus();
   else {
     const action = dialogTrigger?.dataset.action;

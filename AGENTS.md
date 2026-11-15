@@ -106,7 +106,7 @@
 
 ## 9. 英语小星球实际配置
 
-- 本项目 `/Users/yanren/Documents/github/little-english`；主干 main，唯一公开仓库 ZhiYanRen/little-english。正式网址仅在部署访问验证后记录。
+- 本项目 `/Users/yanren/Documents/github/little-english`；主干 main，唯一公开仓库 ZhiYanRen/little-english。正式网站 https://zhiyanren.github.io/little-english/ 已首次部署并访问验证。
 - 纯静态 HTML/CSS/JavaScript ES modules；无后端、账号、云函数、托管数据库或 SSR。Node.js 22.16+ 仅开发/CI 使用。
 - `npm ci`、`npm test`、`npm run build`、`npm start`、`npm run test:browser`；预览端口 4182，测试使用真实项目子路径 /little-english/。静态产物 dist/，Pages 来源 Actions，工作流 .github/workflows/pages.yml。
 - iPad App 布局：稳定侧栏、课本目录、聚焦学习区；窄屏底部导航。验证 iPad 横竖屏、手机、PC、触控、键盘、减少动态效果、弹窗和失败恢复，不把模拟当真机。

@@ -20,6 +20,6 @@ Node.js 22.16+。`npm ci` 安装开发依赖；`npm test` 执行数据、导入�
 
 ## 发布
 
-唯一公开仓库与正式网站在首次部署核验后回填。主干 main；GitHub Pages 来源为 GitHub Actions；`.github/workflows/pages.yml` 验证后仅发布 dist/。只使用最小权限 GITHUB_TOKEN，无后端和跨仓库凭据。
+唯一公开仓库：https://github.com/ZhiYanRen/little-english 。正式网站：https://zhiyanren.github.io/little-english/ （已部署并访问验证）。本地目录：`/Users/yanren/Documents/github/little-english`。主干 main；GitHub Pages 来源为 GitHub Actions；`.github/workflows/pages.yml` 验证后仅发布 dist/。只使用最小权限 GITHUB_TOKEN，无后端和跨仓库凭据。
 
-发布后通过应用岛登记脚本同步目录入口。设计见 DESIGN.md，交互见 UX-CONTRACT.md，内容来源见 SOURCES.md。
+已通过应用岛登记脚本同步正式入口：https://zhiyanren.github.io/app-island/ 。设计见 DESIGN.md，交互见 UX-CONTRACT.md，内容来源见 SOURCES.md。
