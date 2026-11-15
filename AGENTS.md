@@ -47,14 +47,14 @@
 
 按当前会话技能目录定位并读取实际 SKILL.md，不固定插件缓存路径；已读且未变化的技能不重复加载。必需技能缺失时先查找安装，仍缺失则报告阻碍，不声称已使用。技能建议不得覆盖静态技术边界及 iPad App 布局要求。
 
-| 任务 | 必须使用的技能与职责 |
-| --- | --- |
-| 开发、修复、重构、依赖选择与代码审查 | `ponytail` 默认 full；完整解决需求的最小改动，复用现有实现，保留验证、错误处理、安全和无障碍 |
-| 新建、修改、重构或审查界面 | `ui-ux-pro-max` + `frontend-design-premium:frontend-design` + `frontend-design-premium:frontend-design-premium`；分别负责设计依据、视觉方向和产品行为，Premium 必须与上游 Frontend Design 同用 |
-| 复杂动效或运行时动画控制 | `gsap-core` + `gsap-performance`；序列编排加 `gsap-timeline`；React 加 `gsap-react`，Vue/Svelte 等加 `gsap-frameworks` |
-| 滚动、插件或工具函数的专项动效 | 按需加 `gsap-scrolltrigger`、`gsap-plugins`、`gsap-utils`；简单过渡优先 CSS，不为使用技能新增依赖 |
-| 明确的设计探索、体验审查或视觉还原 | 按任务调用 `product-design:index` 及对应专项技能；实际涉及 Figma 时使用对应 Figma 技能及必要前置技能，不强制普通开发启动专项流程 |
-| 正式代码质量审查或整仓审查 | 分别使用 `ponytail-review` 或 `ponytail-audit`；help、debt、gain 按需使用，不是每次开发的必跑步骤 |
+| 任务                                 | 必须使用的技能与职责                                                                                                                                                                           |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 开发、修复、重构、依赖选择与代码审查 | `ponytail` 默认 full；完整解决需求的最小改动，复用现有实现，保留验证、错误处理、安全和无障碍                                                                                                   |
+| 新建、修改、重构或审查界面           | `ui-ux-pro-max` + `frontend-design-premium:frontend-design` + `frontend-design-premium:frontend-design-premium`；分别负责设计依据、视觉方向和产品行为，Premium 必须与上游 Frontend Design 同用 |
+| 复杂动效或运行时动画控制             | `gsap-core` + `gsap-performance`；序列编排加 `gsap-timeline`；React 加 `gsap-react`，Vue/Svelte 等加 `gsap-frameworks`                                                                         |
+| 滚动、插件或工具函数的专项动效       | 按需加 `gsap-scrolltrigger`、`gsap-plugins`、`gsap-utils`；简单过渡优先 CSS，不为使用技能新增依赖                                                                                              |
+| 明确的设计探索、体验审查或视觉还原   | 按任务调用 `product-design:index` 及对应专项技能；实际涉及 Figma 时使用对应 Figma 技能及必要前置技能，不强制普通开发启动专项流程                                                               |
+| 正式代码质量审查或整仓审查           | 分别使用 `ponytail-review` 或 `ponytail-audit`；help、debt、gain 按需使用，不是每次开发的必跑步骤                                                                                              |
 
 - UI/UX Pro Max：新项目、新页面及整体视觉方向使用 `--design-system`；局部问题使用对应 `--domain`，技术栈依据项目实际情况，筛选 iPad、触控、响应式和无障碍建议。
 - 界面任务先读取并按所用技能维护 DESIGN.md，复用既有视觉系统和共享组件；复杂多页面行为按 Premium 的适用条件维护 UX-CONTRACT.md，不建立重复的设计权威来源。
