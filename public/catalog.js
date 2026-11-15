@@ -1,0 +1,85 @@
+// Unit titles verified against the Chinese publisher's second-edition Level 2 catalogue.
+const rows = [
+  [
+    "Hello again!",
+    "又见面啦",
+    "问候与介绍",
+    "认识人物、回顾颜色和数字。",
+    "spark",
+  ],
+  [
+    "Back to school",
+    "回到学校",
+    "学校与教室",
+    "整理学校用品，学习描述教室。",
+    "school",
+  ],
+  [
+    "Play time!",
+    "玩耍时间",
+    "玩具与物品",
+    "认识玩具，辨认物品与归属。",
+    "kite",
+  ],
+  ["At home", "在家里", "家居与生活", "认识家中物品，表达物品归属。", "home"],
+  [
+    "Meet my family",
+    "认识我的家人",
+    "家人与动作",
+    "介绍家庭，描述正在做的事情。",
+    "people",
+  ],
+  [
+    "Dinner time",
+    "晚餐时间",
+    "食物与用餐",
+    "认识食物，练习礼貌用餐表达。",
+    "bowl",
+  ],
+  ["At the farm", "在农场", "动物与喜好", "认识动物，交流自己的喜好。", "leaf"],
+  ["My town", "我的小镇", "地点与方位", "认识城镇地点，描述位置关系。", "town"],
+  [
+    "Our clothes",
+    "我们的衣服",
+    "服饰与穿着",
+    "认识衣物，描述人物的穿着。",
+    "shirt",
+  ],
+  [
+    "Our hobbies",
+    "我们的爱好",
+    "活动与兴趣",
+    "认识休闲活动，交流兴趣爱好。",
+    "ball",
+  ],
+  [
+    "My birthday",
+    "我的生日",
+    "生日与分享",
+    "围绕生日聚会，练习邀请与分享。",
+    "cake",
+  ],
+  [
+    "On holiday!",
+    "去度假啦",
+    "假日与出行",
+    "认识度假场景，表达出行意愿。",
+    "sun",
+  ],
+];
+export const units = rows.map(([title, zh, theme, summary, icon], i) => ({
+  id: i + 1,
+  title,
+  zh,
+  theme,
+  summary,
+  icon,
+  source: `https://www.unischool.cn/kb/resource/kb2/book2/unit${i + 1}/`,
+  color: ["blue", "coral", "purple", "green"][Math.floor(i / 3)],
+}));
+export const typeNames = {
+  word: "单词",
+  phrase: "短语",
+  sentence: "句子",
+  audio: "音频",
+};
